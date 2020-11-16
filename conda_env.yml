@@ -1,0 +1,13 @@
+name: web2tree
+channels:
+  - conda-forge
+  - defaults
+dependencies:
+  - pip
+  - python=3.8
+  - pip:
+    - --editable .
+    - pytest
+    - tox
+    - black
+    - isort
