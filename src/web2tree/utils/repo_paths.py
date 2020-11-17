@@ -54,3 +54,10 @@ class repoPathManager:
         self.find_src()
         self._combine_one("web2tree")
         return self.base
+
+    @property
+    @_wrapping_refreshing
+    def output(self):
+        self.find_src()
+        self._combine_one("output")
+        return self.base
