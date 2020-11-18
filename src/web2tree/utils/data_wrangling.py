@@ -13,8 +13,8 @@ def wrap_attr(attr):
     return "".join(("{", wrap_str(attr), "}"))
 
 
-def split_by_arrows(arrowed):
-    return arrowed.replace(" ", "").split("->")
+def split_by_arrows(arrowed, arrow):
+    return arrowed.replace(" ", "").split(arrow)
 
 
 def get_val_from_nested_dict(keys, nested_dict):

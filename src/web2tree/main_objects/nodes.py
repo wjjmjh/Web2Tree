@@ -29,6 +29,7 @@ class Node:
         self._refresh_attributes()
         self.parent = None
         self.children = []
+        self.arrow = None
 
     def _refresh_attributes(self):
         self.attributes = {"props": self._props, "states": self.states}
@@ -38,7 +39,12 @@ class Node:
             self.attrs = self.extract_attrs(self._props, self._states)
 
     def __getitem__(self, arrowed_path):
-        path = split_by_arrows(arrowed_path)
+        if self.arrow is None:
+            raise KeyError(
+                "You haven't set the arrow being used in arrowed_path, please call method set_arrow to set the arrow;\n"
+                "for example: if your arrowed_path is '1->2->3', you may node.set_arrow('->') first."
+            )
+        path = split_by_arrows(arrowed_path, self.arrow)
         assert (
             path[0] in self.container.keys()
         ), "getitem method is only applicable to {} yet.".format(
@@ -47,7 +53,12 @@ class Node:
         return get_val_from_nested_dict(path, self.container)
 
     def __setitem__(self, arrowed_path, value):
-        path = split_by_arrows(arrowed_path)
+        if self.arrow is None:
+            raise KeyError(
+                "You haven't set the arrow being used in arrowed_path, please call method set_arrow to set the arrow;\n"
+                "for example: if your arrowed_path is '1->2->3', you may node.set_arrow('->') first."
+            )
+        path = split_by_arrows(arrowed_path, self.arrow)
         assert (
             path[0] in self.container.keys()
         ), "getitem method is only applicable to {} yet.".format(
@@ -67,6 +78,9 @@ class Node:
 
     def append_to(self, node):
         node.append_node(self)
+
+    def set_arrow(self, arrow):
+        setattr(self, "arrow", arrow)
 
     @property
     def props(self):
