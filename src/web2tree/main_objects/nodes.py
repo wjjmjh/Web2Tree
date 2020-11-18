@@ -66,6 +66,9 @@ class Node:
         )
         set_val_for_nested_dict(path, value, self.container)
 
+    def is_root(self):
+        return self.parent is None
+
     def container_keys(self, keys_connector):
         container_keys = extract_all_keys_from_a_dict(
             self.container, keys_connector=keys_connector
