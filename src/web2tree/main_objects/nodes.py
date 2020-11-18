@@ -1,4 +1,5 @@
 from copy import copy
+from uuid import uuid4
 
 from web2tree.core.constructions.skeleton_construction import wrap_into_div
 from web2tree.utils.data_wrangling import (extract_all_keys_from_a_dict,
@@ -25,6 +26,11 @@ class Node:
             assert isinstance(
                 attributes, dict
             ), "props or states is supposed to have dictionary data type."
+        self.class_name = attributes.pop("class_name", None)
+        self.id = attributes.pop("id", None)
+        if self.id is not None:
+            self.id = "{id}-{uuid}".format(id=self.id, uuid=uuid4())
+
         self.extract_attrs = extract_attrs
         self._update_props_states(props, states)
         self._update_container()
@@ -72,6 +78,9 @@ class Node:
         set_val_for_nested_dict(path, value, self.container)
         self._props = self.container["attributes"]["props"]
         self._states = self.container["attributes"]["states"]
+
+    def __str__(self):
+        return "({class_name} | {id})".format(class_name=self.class_name, id=self.id)
 
     def is_root(self):
         return self.parent is None
