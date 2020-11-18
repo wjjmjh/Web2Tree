@@ -6,8 +6,9 @@ def wrap_into_div(to_be_wrapped):
     return construct_skeleton(DIV, content=to_be_wrapped)
 
 
-def construct_skeleton(element_type, **attrs):
-    content = attrs.pop("content", None)
+def construct_skeleton(element_type, **kwargs):
+    content = kwargs.pop("content", None)
+    attrs = kwargs.pop("attrs", dict())
     attrs = " ".join(
         (
             "{attr_k}={attr_v}".format(
