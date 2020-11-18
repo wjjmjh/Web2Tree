@@ -7,10 +7,10 @@ from web2tree.utils.data_wrangling import (extract_all_keys_from_a_dict,
                                            split_by_arrows)
 
 
-def _with_attributes_updated(func):
+def _with_container_updated(func):
     def wrapped(self, *args, **kwargs):
         got = func(self, *args, **kwargs)
-        self._refresh_attributes()
+        self._update_container()
         return got
 
     return wrapped
@@ -26,12 +26,12 @@ class Node:
                 attributes, dict
             ), "props or states is supposed to have dictionary data type."
         self.extract_attrs = extract_attrs
-        self._refresh_attributes()
+        self._update_container()
         self.parent = None
         self.children = []
         self.arrow = None
 
-    def _refresh_attributes(self):
+    def _update_container(self):
         self.attributes = {"props": self._props, "states": self.states}
         self.container = {"attributes": self.attributes}
         self.attrs = None
@@ -66,11 +66,10 @@ class Node:
         )
         set_val_for_nested_dict(path, value, self.container)
 
-    def verbose_container(self, keys_connector):
+    def container_keys(self, keys_connector):
         container_keys = extract_all_keys_from_a_dict(
             self.container, keys_connector=keys_connector
         )
-        print(" | ".join([keys_connector.join(path) for path in container_keys]))
         return container_keys
 
     def append_node(self, node):
@@ -87,7 +86,7 @@ class Node:
         return self._props
 
     @props.setter
-    @_with_attributes_updated
+    @_with_container_updated
     def props(self, new_props):
         assert isinstance(
             new_props, dict
@@ -99,7 +98,7 @@ class Node:
         return self._states
 
     @states.setter
-    @_with_attributes_updated
+    @_with_container_updated
     def states(self, new_states):
         assert isinstance(
             new_states, dict
