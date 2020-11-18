@@ -1,7 +1,8 @@
 from copy import copy
 
 from web2tree.core.constructions.skeleton_construction import wrap_into_div
-from web2tree.utils.data_wrangling import (get_val_from_nested_dict,
+from web2tree.utils.data_wrangling import (extract_all_keys_from_a_dict,
+                                           get_val_from_nested_dict,
                                            set_val_for_nested_dict,
                                            split_by_arrows)
 
@@ -31,6 +32,7 @@ class Node:
 
     def _refresh_attributes(self):
         self.attributes = {"props": self._props, "states": self.states}
+        self.container = {"attributes": self.attributes}
         self.attrs = None
         if self.extract_attrs is not None:
             self.attrs = self.extract_attrs(self._props, self._states)
@@ -38,16 +40,27 @@ class Node:
     def __getitem__(self, arrowed_path):
         path = split_by_arrows(arrowed_path)
         assert (
-            path[0] in self.attributes.keys()
-        ), "getitem method is only applicable to props or states yet."
-        return get_val_from_nested_dict(path, self.attributes)
+            path[0] in self.container.keys()
+        ), "getitem method is only applicable to {} yet.".format(
+            ", ".join([k for k in self.container.keys()])
+        )
+        return get_val_from_nested_dict(path, self.container)
 
     def __setitem__(self, arrowed_path, value):
         path = split_by_arrows(arrowed_path)
         assert (
-            path[0] in self.attributes.keys()
-        ), "getitem method is only applicable to props or states yet."
-        set_val_for_nested_dict(path, value, self.attributes)
+            path[0] in self.container.keys()
+        ), "getitem method is only applicable to {} yet.".format(
+            ", ".join([k for k in self.container.keys()])
+        )
+        set_val_for_nested_dict(path, value, self.container)
+
+    def verbose_container(self, keys_connector):
+        container_keys = extract_all_keys_from_a_dict(
+            self.container, keys_connector=keys_connector
+        )
+        print(" | ".join([keys_connector.join(path) for path in container_keys]))
+        return container_keys
 
     def append_node(self, node):
         self.children.append(node)
