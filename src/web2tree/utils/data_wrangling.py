@@ -40,3 +40,23 @@ def set_val_for_nested_dict(keys, v, nested_dict):
             keys[1:], v, nested_dict[keys[0]]
         )
         return nested_dict
+
+
+def extract_all_keys_from_a_dict(dict_, keys=None, base="", keys_connector="->"):
+    if keys is None:
+        keys = []
+
+    def _extract(dict_, keys, base):
+        for k, v in dict_.items():
+            new_base = "{base}{connector}{k}".format(
+                base=base, connector=keys_connector, k=k
+            )
+            if isinstance(v, dict):
+                keys.append(new_base)
+                extract_all_keys_from_a_dict(v, keys=keys, base=new_base)
+            else:
+                keys.append(new_base)
+        return keys
+
+    extracted = _extract(dict_, keys, base)
+    return [it.split(keys_connector)[1:] for it in extracted]
