@@ -1,4 +1,9 @@
+from copy import copy
+
 from web2tree.core.constructions.skeleton_construction import wrap_into_div
+from web2tree.utils.data_wrangling import (get_val_from_nested_dict,
+                                           set_val_for_nested_dict,
+                                           split_by_arrows)
 
 
 def _with_attributes_updated(func):
@@ -29,6 +34,20 @@ class Node:
         if self.extract_attrs is not None:
             self.attrs = self.extract_attrs(self._props, self._states)
 
+    def __getitem__(self, arrowed_path):
+        path = split_by_arrows(arrowed_path)
+        assert (
+            path[0] in self.attributes.keys()
+        ), "getitem method is only applicable to props or states yet."
+        return get_val_from_nested_dict(path, self.attributes)
+
+    def __setitem__(self, arrowed_path, value):
+        path = split_by_arrows(arrowed_path)
+        assert (
+            path[0] in self.attributes.keys()
+        ), "getitem method is only applicable to props or states yet."
+        set_val_for_nested_dict(path, value, self.attributes)
+
     @property
     def props(self):
         return self._props
@@ -52,6 +71,9 @@ class Node:
             new_states, dict
         ), "states is supposed to have dictionary data type."
         self._states = new_states
+
+    def hook(self, const, node):
+        pass
 
     def to_skeleton(self):
         return wrap_into_div(
