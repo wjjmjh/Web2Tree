@@ -16,7 +16,7 @@ def _with_attributes_updated(func):
 
 
 class Node:
-    def __init__(self, element, content=None, extract_attrs=None, **attributes):
+    def __init__(self, element, extract_attrs=None, **attributes):
         self.element = element
         self._props = attributes.pop("props", None)
         self._states = attributes.pop("states", None)
@@ -24,9 +24,10 @@ class Node:
             assert isinstance(
                 attributes, dict
             ), "props or states is supposed to have dictionary data type."
-        self.content = content
         self.extract_attrs = extract_attrs
         self._refresh_attributes()
+        self.parent = None
+        self.children = []
 
     def _refresh_attributes(self):
         self.attributes = {"props": self._props, "states": self.states}
@@ -47,6 +48,12 @@ class Node:
             path[0] in self.attributes.keys()
         ), "getitem method is only applicable to props or states yet."
         set_val_for_nested_dict(path, value, self.attributes)
+
+    def append_node(self, node):
+        self.children.append(node)
+
+    def append_to(self, node):
+        node.append_node(self)
 
     @property
     def props(self):
@@ -76,8 +83,9 @@ class Node:
         pass
 
     def to_skeleton(self):
+        content = ""
+        for child_element in self.children:
+            content += child_element.to_skeleton
         return wrap_into_div(
-            to_be_wrapped=self.element.to_skeleton(
-                content=self.content, attrs=self.attrs
-            )
+            to_be_wrapped=self.element.to_skeleton(content=content, attrs=self.attrs)
         )
