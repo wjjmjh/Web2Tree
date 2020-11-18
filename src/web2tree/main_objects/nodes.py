@@ -19,17 +19,22 @@ def _with_container_updated(func):
 class Node:
     def __init__(self, element, extract_attrs=None, **attributes):
         self.element = element
-        self._props = attributes.pop("props", None)
-        self._states = attributes.pop("states", None)
-        for attributes in (self._props, self._states):
+        props = attributes.pop("props", None)
+        states = attributes.pop("states", None)
+        for attributes in (props, states):
             assert isinstance(
                 attributes, dict
             ), "props or states is supposed to have dictionary data type."
         self.extract_attrs = extract_attrs
+        self._update_props_states(props, states)
         self._update_container()
         self.parent = None
         self.children = []
         self.arrow = None
+
+    def _update_props_states(self, props, states):
+        self._props = props
+        self._states = states
 
     def _update_container(self):
         self.attributes = {"props": self._props, "states": self.states}
@@ -65,6 +70,8 @@ class Node:
             ", ".join([k for k in self.container.keys()])
         )
         set_val_for_nested_dict(path, value, self.container)
+        self._props = self.container["attributes"]["props"]
+        self._states = self.container["attributes"]["states"]
 
     def is_root(self):
         return self.parent is None
