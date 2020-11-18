@@ -1,6 +1,15 @@
 from web2tree.core.constructions.skeleton_construction import wrap_into_div
 
 
+def _with_attributes_updated(func):
+    def wrapped(self, *args, **kwargs):
+        got = func(self, *args, **kwargs)
+        self._refresh_attributes()
+        return got
+
+    return wrapped
+
+
 class Node:
     def __init__(self, element, content=None, extract_attrs=None, **attributes):
         self.element = element
@@ -11,15 +20,21 @@ class Node:
                 attributes, dict
             ), "props or states is supposed to have dictionary data type."
         self.content = content
+        self.extract_attrs = extract_attrs
+        self._refresh_attributes()
+
+    def _refresh_attributes(self):
+        self.attributes = {"props": self._props, "states": self.states}
         self.attrs = None
-        if extract_attrs is not None:
-            self.attrs = extract_attrs(self._props, self._states)
+        if self.extract_attrs is not None:
+            self.attrs = self.extract_attrs(self._props, self._states)
 
     @property
     def props(self):
         return self._props
 
     @props.setter
+    @_with_attributes_updated
     def props(self, new_props):
         assert isinstance(
             new_props, dict
@@ -31,6 +46,7 @@ class Node:
         return self._states
 
     @states.setter
+    @_with_attributes_updated
     def states(self, new_states):
         assert isinstance(
             new_states, dict
