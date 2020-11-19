@@ -1,10 +1,9 @@
 from copy import copy
 from uuid import uuid4
 
-from anytree import Node
+from anytree import Node as anytree_node
 
 from web2tree.core.constructions.skeleton_construction import wrap_into_div
-from web2tree.main_objects import nodes_to_parent
 from web2tree.utils.data_wrangling import (extract_all_keys_from_a_dict,
                                            get_val_from_nested_dict,
                                            set_val_for_nested_dict,
@@ -84,7 +83,9 @@ class Node:
         self._states = self.container["attributes"]["states"]
 
     def __str__(self):
-        return "({class_name} | {id})".format(class_name=self.class_name, id=self.id)
+        return "({element_type} | {class_name} | {id})".format(
+            element_type=self.element, class_name=self.class_name, id=self.id
+        )
 
     def is_root(self):
         return self.parent is None
@@ -116,7 +117,9 @@ class Node:
                 n.insert_node_by_id(id, node)
 
     def link_up(self):
-        parent = Node(name=self.__str__())
+        from web2tree.main_objects import nodes_to_parent
+
+        parent = anytree_node(name=self.__str__())
         nodes_to_parent([str(child) for child in self.children], parent)
         for child in self.children:
             child.link_up()
