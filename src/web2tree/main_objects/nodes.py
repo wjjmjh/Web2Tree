@@ -1,7 +1,10 @@
 from copy import copy
 from uuid import uuid4
 
+from anytree import Node
+
 from web2tree.core.constructions.skeleton_construction import wrap_into_div
+from web2tree.main_objects import nodes_to_parent
 from web2tree.utils.data_wrangling import (extract_all_keys_from_a_dict,
                                            get_val_from_nested_dict,
                                            set_val_for_nested_dict,
@@ -111,6 +114,13 @@ class Node:
         else:
             for n in self.children:
                 n.insert_node_by_id(id, node)
+
+    def link_up(self):
+        parent = Node(name=self.__str__())
+        nodes_to_parent([str(child) for child in self.children], parent)
+        for child in self.children:
+            child.link_up()
+        return parent
 
     def set_arrow(self, arrow):
         setattr(self, "arrow", arrow)
