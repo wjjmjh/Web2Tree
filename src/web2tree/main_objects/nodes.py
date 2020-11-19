@@ -83,6 +83,13 @@ class Node:
         self._states = self.container["attributes"]["states"]
 
     def __str__(self):
+        if not self.is_root():
+            return "({i} | {element_type} | {class_name} | {id})".format(
+                i=self.parent.children.index(self),
+                element_type=self.element,
+                class_name=self.class_name,
+                id=self.id,
+            )
         return "({element_type} | {class_name} | {id})".format(
             element_type=self.element, class_name=self.class_name, id=self.id
         )
@@ -97,10 +104,12 @@ class Node:
         return container_keys
 
     def append_node(self, node):
+        node.parent = self
         self.children.append(node)
 
     def append_to(self, node):
         node.append_node(self)
+        self.parent = node
 
     def insert_node_by_path(self, path, node):
         assert is_iterable(path), "path is supposed to be iterable."

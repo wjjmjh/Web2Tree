@@ -22,4 +22,4 @@ class Tree:
     def visualise_tree(self):
         TREE = self.root.link_up()
         for pre, fill, node in RenderTree(TREE):
-            print("%s%s" % (pre, node))
+            print("%s%s" % (pre, node.name))
