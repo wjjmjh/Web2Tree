@@ -21,8 +21,8 @@ def _with_container_updated(func):
 class Node:
     def __init__(self, element, extract_attrs=None, **attributes):
         self.element = element
-        props = attributes.pop("props", None)
-        states = attributes.pop("states", None)
+        props = attributes.pop("props", dict())
+        states = attributes.pop("states", dict())
         for attributes in (props, states):
             assert isinstance(
                 attributes, dict
