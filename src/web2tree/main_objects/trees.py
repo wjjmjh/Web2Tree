@@ -3,7 +3,7 @@ from anytree import Node, RenderTree
 
 def nodes_to_parent(nodes, parent):
     for node in nodes:
-        Node(node, parent=parent)
+        Node(node.name, parent=parent, full_node=node)
 
 
 class Tree:

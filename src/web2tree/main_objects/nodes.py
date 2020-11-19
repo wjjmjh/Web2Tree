@@ -128,8 +128,8 @@ class Node:
     def link_up(self):
         from web2tree.main_objects import nodes_to_parent
 
-        parent = anytree_node(name=self.__str__())
-        nodes_to_parent([str(child) for child in self.children], parent)
+        parent = anytree_node(name=self.__str__(), full_node=self)
+        nodes_to_parent([child for child in self.children], parent)
         for child in self.children:
             child.link_up()
         return parent
@@ -160,9 +160,6 @@ class Node:
             new_states, dict
         ), "states is supposed to have dictionary data type."
         self._states = new_states
-
-    def hook(self, const, node):
-        pass
 
     def to_skeleton(self):
         content = ""
