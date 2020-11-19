@@ -6,6 +6,7 @@ from web2tree.utils.data_wrangling import (extract_all_keys_from_a_dict,
                                            get_val_from_nested_dict,
                                            set_val_for_nested_dict,
                                            split_by_arrows)
+from web2tree.utils.misc import is_iterable
 
 
 def _with_container_updated(func):
@@ -96,6 +97,13 @@ class Node:
 
     def append_to(self, node):
         node.append_node(self)
+
+    def insert_node_by_path(self, path, node):
+        assert is_iterable(path), "path is supposed to be iterable."
+        if len(path) == 1:
+            self.children[path[0]].append_node(node)
+        else:
+            self.children[path[0]].insert_node_by_path(path[1:], node)
 
     def set_arrow(self, arrow):
         setattr(self, "arrow", arrow)
