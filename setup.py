@@ -6,8 +6,9 @@ setup(
     description="An elegant way to hack front ends.",
     packages=find_packages(where="src"),
     package_dir={"": "src"},
-    install_requires=[],
+    install_requires=["anytree"],
     extras_require={"dev": [
+        "anytree",
         "pytest",
         "tox",
         "black",
