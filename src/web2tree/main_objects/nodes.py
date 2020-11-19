@@ -105,6 +105,13 @@ class Node:
         else:
             self.children[path[0]].insert_node_by_path(path[1:], node)
 
+    def insert_node_by_id(self, id, node):
+        if id == self.id:
+            self.append_node(node)
+        else:
+            for n in self.children:
+                n.insert_node_by_id(id, node)
+
     def set_arrow(self, arrow):
         setattr(self, "arrow", arrow)
 
