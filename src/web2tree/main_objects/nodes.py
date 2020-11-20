@@ -125,14 +125,15 @@ class Node:
             for n in self.children:
                 n.insert_node_by_id(id, node)
 
-    def link_up(self):
+    def link_up(self, parental_anytree_node):
         from web2tree.main_objects import nodes_to_parent
 
-        parent = anytree_node(name=self.__str__(), full_node=self)
-        nodes_to_parent([child for child in self.children], parent)
-        for child in self.children:
-            child.link_up()
-        return parent
+        parented_anytree_nodes = nodes_to_parent(
+            [child for child in self.children], parental_anytree_node
+        )
+        for i, child in enumerate(self.children):
+            child.link_up(parented_anytree_nodes[i])
+        return parental_anytree_node
 
     def set_arrow(self, arrow):
         setattr(self, "arrow", arrow)
